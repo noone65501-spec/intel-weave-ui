@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as GraphRouteImport } from './routes/graph'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InvestigationsIndexRouteImport } from './routes/investigations.index'
 import { Route as InvestigationsNewRouteImport } from './routes/investigations.new'
 import { Route as InvestigationsIdRouteImport } from './routes/investigations.$id'
 
+const GraphRoute = GraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -44,6 +50,7 @@ const InvestigationsIdRoute = InvestigationsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/graph': typeof GraphRoute
   '/investigations/$id': typeof InvestigationsIdRoute
   '/investigations/new': typeof InvestigationsNewRoute
   '/investigations/': typeof InvestigationsIndexRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/graph': typeof GraphRoute
   '/investigations/$id': typeof InvestigationsIdRoute
   '/investigations/new': typeof InvestigationsNewRoute
   '/investigations': typeof InvestigationsIndexRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/graph': typeof GraphRoute
   '/investigations/$id': typeof InvestigationsIdRoute
   '/investigations/new': typeof InvestigationsNewRoute
   '/investigations/': typeof InvestigationsIndexRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/graph'
     | '/investigations/$id'
     | '/investigations/new'
     | '/investigations/'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/graph'
     | '/investigations/$id'
     | '/investigations/new'
     | '/investigations'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/graph'
     | '/investigations/$id'
     | '/investigations/new'
     | '/investigations/'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  GraphRoute: typeof GraphRoute
   InvestigationsIdRoute: typeof InvestigationsIdRoute
   InvestigationsNewRoute: typeof InvestigationsNewRoute
   InvestigationsIndexRoute: typeof InvestigationsIndexRoute
@@ -97,6 +110,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  GraphRoute: GraphRoute,
   InvestigationsIdRoute: InvestigationsIdRoute,
   InvestigationsNewRoute: InvestigationsNewRoute,
   InvestigationsIndexRoute: InvestigationsIndexRoute,
