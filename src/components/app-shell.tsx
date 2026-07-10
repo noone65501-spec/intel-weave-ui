@@ -19,7 +19,7 @@ const nav = [
 ];
 
 export function AppShell({ children, title, subtitle, actions }: {
-  children: ReactNode; title?: string; subtitle?: string; actions?: ReactNode;
+  children: ReactNode; title?: string; subtitle?: ReactNode; actions?: ReactNode;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
