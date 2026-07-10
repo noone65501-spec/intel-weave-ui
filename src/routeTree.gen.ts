@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as IdentityRouteImport } from './routes/identity'
 import { Route as GraphRouteImport } from './routes/graph'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -21,6 +22,11 @@ import { Route as InvestigationsIdRouteImport } from './routes/investigations.$i
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IdentityRoute = IdentityRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/graph': typeof GraphRoute
   '/identity': typeof IdentityRoute
+  '/reports': typeof ReportsRoute
   '/timeline': typeof TimelineRoute
   '/investigations/$id': typeof InvestigationsIdRoute
   '/investigations/new': typeof InvestigationsNewRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/graph': typeof GraphRoute
   '/identity': typeof IdentityRoute
+  '/reports': typeof ReportsRoute
   '/timeline': typeof TimelineRoute
   '/investigations/$id': typeof InvestigationsIdRoute
   '/investigations/new': typeof InvestigationsNewRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/graph': typeof GraphRoute
   '/identity': typeof IdentityRoute
+  '/reports': typeof ReportsRoute
   '/timeline': typeof TimelineRoute
   '/investigations/$id': typeof InvestigationsIdRoute
   '/investigations/new': typeof InvestigationsNewRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/graph'
     | '/identity'
+    | '/reports'
     | '/timeline'
     | '/investigations/$id'
     | '/investigations/new'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/graph'
     | '/identity'
+    | '/reports'
     | '/timeline'
     | '/investigations/$id'
     | '/investigations/new'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/graph'
     | '/identity'
+    | '/reports'
     | '/timeline'
     | '/investigations/$id'
     | '/investigations/new'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   GraphRoute: typeof GraphRoute
   IdentityRoute: typeof IdentityRoute
+  ReportsRoute: typeof ReportsRoute
   TimelineRoute: typeof TimelineRoute
   InvestigationsIdRoute: typeof InvestigationsIdRoute
   InvestigationsNewRoute: typeof InvestigationsNewRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/timeline'
       fullPath: '/timeline'
       preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/identity': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   GraphRoute: GraphRoute,
   IdentityRoute: IdentityRoute,
+  ReportsRoute: ReportsRoute,
   TimelineRoute: TimelineRoute,
   InvestigationsIdRoute: InvestigationsIdRoute,
   InvestigationsNewRoute: InvestigationsNewRoute,
