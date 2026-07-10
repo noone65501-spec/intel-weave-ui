@@ -26,7 +26,7 @@ function Detail() {
   return (
     <AppShell
       title={inv.name}
-      subtitle={<><span className="font-mono text-xs">{inv.id}</span> · target <span className="font-mono">{inv.target}</span></> as unknown as string}
+      subtitle={<><span className="font-mono text-xs">{inv.id}</span> · target <span className="font-mono">{inv.target}</span></>}
       actions={
         <div className="flex items-center gap-2">
           <Link to="/investigations">
