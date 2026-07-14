@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
-import type { InvestigationStatus, Severity } from "@/lib/mock-data";
+import type { ConnectorRunStatus, InvestigationStatus, Severity } from "@/types/domain";
 
-export function StatusBadge({ status }: { status: InvestigationStatus | "success" | "running" | "queued" | "failed" }) {
+type BadgeStatus = InvestigationStatus | ConnectorRunStatus;
+
+export function StatusBadge({ status }: { status: BadgeStatus }) {
   const map: Record<string, { label: string; cls: string; dot: string }> = {
     active:    { label: "Active",    cls: "bg-primary/10 text-primary border-primary/30",    dot: "bg-primary" },
     completed: { label: "Completed", cls: "bg-success/10 text-success border-success/30",    dot: "bg-success" },
