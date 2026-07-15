@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Eye, Plus, Sparkles, ChevronRight } from "lucide-react";
 import { AsyncBoundary, EmptyState } from "@/components/states";
-import { useReports } from "@/hooks/use-osint-data";
+import { useDownloadReport, useGenerateReport, useReports } from "@/hooks/use-osint-data";
 import { cn } from "@/lib/utils";
 import type { Report } from "@/types/domain";
 
