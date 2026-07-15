@@ -97,8 +97,11 @@ export function useTimeline(
   );
 }
 
-export function useReports(): AsyncResource<Report[]> {
-  return useResource(() => getDataProvider().listReports(), []);
+export function useReports(investigationId?: string): AsyncResource<Report[]> {
+  return useResource(
+    () => getDataProvider().listReports(investigationId),
+    [investigationId],
+  );
 }
 
 export function useDashboardStats(): AsyncResource<DashboardStat[]> {
@@ -120,3 +123,73 @@ export function useGraph(investigationId?: string): AsyncResource<GraphData> {
     [investigationId],
   );
 }
+
+// ---- Mutations -------------------------------------------------------------
+// Small mutation primitive so pages don't need to hand-roll pending/error
+// tracking around write operations. Signature intentionally matches a subset
+// of React Query's `useMutation` so a future migration is mechanical.
+
+function useMutation<TInput, TOutput>(
+  fn: (input: TInput) => Promise<TOutput>,
+): MutationResource<TInput, TOutput> {
+  const [data, setData] = useState<TOutput | undefined>(undefined);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<ApiError | null>(null);
+
+  const mutate = useCallback(
+    async (input: TInput) => {
+      setIsPending(true);
+      setError(null);
+      try {
+        const result = await fn(input);
+        setData(result);
+        setIsPending(false);
+        return result;
+      } catch (err) {
+        const apiErr: ApiError = {
+          message: err instanceof Error ? err.message : "Unknown error",
+        };
+        setError(apiErr);
+        setIsPending(false);
+        throw err;
+      }
+    },
+    [fn],
+  );
+
+  const reset = useCallback(() => {
+    setData(undefined);
+    setError(null);
+    setIsPending(false);
+  }, []);
+
+  return { data, isPending, error, mutate, reset };
+}
+
+export function useCreateInvestigation() {
+  return useMutation<NewInvestigationInput, Investigation>((input) =>
+    getDataProvider().createInvestigation(input),
+  );
+}
+
+export function useExecuteInvestigation() {
+  return useMutation<string, ExecutionResult>((investigationId) =>
+    getDataProvider().executeInvestigation(investigationId),
+  );
+}
+
+export function useGenerateReport() {
+  return useMutation<string, GeneratedReport>((investigationId) =>
+    getDataProvider().generateReport(investigationId),
+  );
+}
+
+export function useDownloadReport() {
+  return useMutation<
+    { investigationId: string; reportId?: string },
+    ReportDownload
+  >(({ investigationId, reportId }) =>
+    getDataProvider().downloadReport(investigationId, reportId),
+  );
+}
+
