@@ -160,11 +160,16 @@ function Detail() {
                     <ArrowLeft className="h-4 w-4" aria-hidden="true" /> All cases
                   </Button>
                 </Link>
-                <Button variant="secondary" className="gap-2">
+                <Button variant="secondary" className="gap-2" onClick={() => invRes.refetch?.()}>
                   <RefreshCw className="h-4 w-4" aria-hidden="true" /> Refresh
                 </Button>
-                <Button className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                  <Play className="h-4 w-4" aria-hidden="true" /> Run all connectors
+                <Button
+                  onClick={() => execute.mutate(inv.id).catch(() => {})}
+                  disabled={execute.isPending}
+                  className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground"
+                >
+                  <Play className="h-4 w-4" aria-hidden="true" />
+                  {execute.isPending ? "Queuing…" : "Run all connectors"}
                 </Button>
               </div>
             }
