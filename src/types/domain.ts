@@ -172,3 +172,52 @@ export interface AsyncResource<T> {
   error: ApiError | null;
   refetch?: () => void;
 }
+
+// Mutations / write-side contracts -------------------------------------------
+// These shapes align with the FastAPI backend's existing endpoints:
+//   POST /api/v1/investigations                → createInvestigation
+//   POST /api/v1/investigations/{id}/execute   → executeInvestigation
+//   POST /api/v1/investigations/{id}/report    → generateReport
+//   GET  /api/v1/investigations/{id}/report    → downloadReport
+// A future FastAPIDataProvider fulfils this contract; pages call mutation
+// hooks and never construct these payloads inline.
+
+export interface NewInvestigationInput {
+  name: string;
+  target: string;
+  severity: Severity;
+  seedType: IdentifierType;
+  seedIdentifiers: string[];
+  notes?: string;
+}
+
+export type ExecutionStatus = "queued" | "running" | "completed" | "failed";
+
+export interface ExecutionResult {
+  investigationId: string;
+  status: ExecutionStatus;
+  startedAt: string;
+}
+
+export interface GeneratedReport {
+  reportId: string;
+  investigationId: string;
+  status: "queued" | "generating" | "ready" | "failed";
+  createdAt: string;
+}
+
+export interface ReportDownload {
+  reportId: string;
+  filename: string;
+  contentType: string;
+  // Placeholder — a real provider will return a Blob / signed URL.
+  url?: string;
+}
+
+export interface MutationResource<TInput, TOutput> {
+  data: TOutput | undefined;
+  isPending: boolean;
+  error: ApiError | null;
+  mutate: (input: TInput) => Promise<TOutput>;
+  reset: () => void;
+}
