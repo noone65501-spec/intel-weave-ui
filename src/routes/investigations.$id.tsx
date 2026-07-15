@@ -12,7 +12,7 @@ import {
 import { AsyncBoundary, EmptyState } from "@/components/states";
 import { ConfidenceBar } from "@/components/confidence-bar";
 import { fmtDate } from "@/lib/format";
-import { useConnectors, useIdentifiers, useInvestigation } from "@/hooks/use-osint-data";
+import { useConnectors, useExecuteInvestigation, useIdentifiers, useInvestigation } from "@/hooks/use-osint-data";
 import type { Connector, Identifier, IdentifierType } from "@/types/domain";
 
 export const Route = createFileRoute("/investigations/$id")({
