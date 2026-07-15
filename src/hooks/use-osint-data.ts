@@ -25,18 +25,6 @@ import type {
   ReportDownload,
   TimelineEvent,
 } from "@/types/domain";
-import type {
-  ApiError,
-  AsyncResource,
-  Connector,
-  DashboardStat,
-  GraphData,
-  Identifier,
-  IdentityProfile,
-  Investigation,
-  Report,
-  TimelineEvent,
-} from "@/types/domain";
 
 function useResource<T>(
   loader: () => Promise<T>,
