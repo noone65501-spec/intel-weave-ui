@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Rocket } from "lucide-react";
+import { useCreateInvestigation } from "@/hooks/use-osint-data";
+import type { IdentifierType, Severity } from "@/types/domain";
 
 export const Route = createFileRoute("/investigations/new")({
   head: () => ({ meta: [{ title: "New Investigation — AXIOM OSINT" }] }),
@@ -16,7 +18,36 @@ export const Route = createFileRoute("/investigations/new")({
 
 function New() {
   const nav = useNavigate();
+  const create = useCreateInvestigation();
   const [name, setName] = useState("");
+  const [severity, setSeverity] = useState<Severity>("high");
+  const [seedType, setSeedType] = useState<IdentifierType>("email");
+  const [seeds, setSeeds] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const canSubmit = name.trim().length > 0 && seeds.trim().length > 0 && !create.isPending;
+
+  async function handleLaunch() {
+    const seedIdentifiers = seeds
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!name.trim() || seedIdentifiers.length === 0) return;
+    try {
+      const created = await create.mutate({
+        name: name.trim(),
+        target: seedIdentifiers[0],
+        severity,
+        seedType,
+        seedIdentifiers,
+        notes: notes.trim() || undefined,
+      });
+      nav({ to: "/investigations/$id", params: { id: created.id } });
+    } catch {
+      // Error is surfaced via create.error below.
+    }
+  }
+
   return (
     <AppShell
       title="Create Investigation"
@@ -30,13 +61,13 @@ function New() {
       <div className="max-w-3xl mx-auto">
         <Card className="glass p-6 border-border/60 space-y-5">
           <div>
-            <Label>Case name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Operation Nightshade" className="mt-1.5 bg-surface/60" />
+            <Label htmlFor="case-name">Case name</Label>
+            <Input id="case-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Operation Nightshade" className="mt-1.5 bg-surface/60" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Severity</Label>
-              <Select defaultValue="high">
+              <Select value={severity} onValueChange={(v) => setSeverity(v as Severity)}>
                 <SelectTrigger className="mt-1.5 bg-surface/60"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="critical">Critical</SelectItem>
@@ -48,7 +79,7 @@ function New() {
             </div>
             <div>
               <Label>Seed identifier type</Label>
-              <Select defaultValue="email">
+              <Select value={seedType} onValueChange={(v) => setSeedType(v as IdentifierType)}>
                 <SelectTrigger className="mt-1.5 bg-surface/60"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="email">Email</SelectItem>
@@ -62,18 +93,28 @@ function New() {
             </div>
           </div>
           <div>
-            <Label>Seed identifiers</Label>
-            <Textarea rows={4} placeholder="one per line, e.g.&#10;j.doe@protonmail.com&#10;secure-login-verify.io" className="mt-1.5 bg-surface/60 font-mono text-xs" />
+            <Label htmlFor="seeds">Seed identifiers</Label>
+            <Textarea id="seeds" rows={4} value={seeds} onChange={(e) => setSeeds(e.target.value)} placeholder="one per line, e.g.&#10;j.doe@protonmail.com&#10;secure-login-verify.io" className="mt-1.5 bg-surface/60 font-mono text-xs" />
           </div>
           <div>
-            <Label>Notes</Label>
-            <Textarea rows={3} placeholder="Investigator context, mandates, TLP…" className="mt-1.5 bg-surface/60" />
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea id="notes" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Investigator context, mandates, TLP…" className="mt-1.5 bg-surface/60" />
           </div>
+
+          {create.error && (
+            <div role="alert" className="text-xs text-destructive">
+              {create.error.message}
+            </div>
+          )}
 
           <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/60">
             <Button variant="ghost" onClick={() => nav({ to: "/investigations" })}>Cancel</Button>
-            <Button onClick={() => nav({ to: "/investigations/$id", params: { id: "INV-1042" } })} className="bg-gradient-to-r from-primary to-accent text-primary-foreground gap-2">
-              <Rocket className="h-4 w-4" /> Launch Investigation
+            <Button
+              onClick={handleLaunch}
+              disabled={!canSubmit}
+              className="bg-gradient-to-r from-primary to-accent text-primary-foreground gap-2"
+            >
+              <Rocket className="h-4 w-4" /> {create.isPending ? "Launching…" : "Launch Investigation"}
             </Button>
           </div>
         </Card>
