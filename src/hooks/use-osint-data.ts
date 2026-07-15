@@ -3,11 +3,28 @@
 // The current provider resolves synchronously from local fixtures, so hooks
 // hydrate immediately and preserve the existing zero-flash UX. Swap in an
 // HTTP-backed `DataProvider` and these same hooks will begin exposing
-// meaningful `isLoading` / `error` states without any change in the pages —
-// pages already render `<LoadingState/>`, `<EmptyState/>`, `<ErrorState/>`.
+// meaningful `isLoading` / `error` states without any page change — pages
+// already render `<LoadingState/>`, `<EmptyState/>`, `<ErrorState/>`.
 
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getDataProvider } from "@/lib/api/data-provider";
+import type {
+  ApiError,
+  AsyncResource,
+  Connector,
+  DashboardStat,
+  ExecutionResult,
+  GeneratedReport,
+  GraphData,
+  Identifier,
+  IdentityProfile,
+  Investigation,
+  MutationResource,
+  NewInvestigationInput,
+  Report,
+  ReportDownload,
+  TimelineEvent,
+} from "@/types/domain";
 import type {
   ApiError,
   AsyncResource,
