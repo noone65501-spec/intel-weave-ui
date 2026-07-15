@@ -120,6 +120,7 @@ function Detail() {
   const invRes = useInvestigation(id);
   const identifiersRes = useIdentifiers(id);
   const connectorsRes = useConnectors(id);
+  const execute = useExecuteInvestigation();
 
   return (
     <AsyncBoundary
