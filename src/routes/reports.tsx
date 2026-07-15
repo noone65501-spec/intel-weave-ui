@@ -145,6 +145,7 @@ function ReportPreview({ report }: { report: Report }) {
 
 function ReportsPage() {
   const resource = useReports();
+  const generate = useGenerateReport();
   const [selected, setSelected] = useState<Report | null>(null);
 
   useEffect(() => {
@@ -153,13 +154,29 @@ function ReportsPage() {
     }
   }, [resource.data, selected]);
 
+  const generateFor = selected?.investigation;
+  async function handleGenerate() {
+    if (!generateFor) return;
+    try {
+      await generate.mutate(generateFor);
+      resource.refetch?.();
+    } catch {
+      /* surfaced via generate.error */
+    }
+  }
+
   return (
     <AppShell
       title="Reports"
       subtitle="Evidence-grade exports and generated summaries"
       actions={
-        <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground gap-2">
-          <Plus className="h-4 w-4" aria-hidden="true" /> Generate report
+        <Button
+          onClick={handleGenerate}
+          disabled={!generateFor || generate.isPending}
+          className="bg-gradient-to-r from-primary to-accent text-primary-foreground gap-2"
+        >
+          <Plus className="h-4 w-4" aria-hidden="true" />
+          {generate.isPending ? "Generating…" : "Generate report"}
         </Button>
       }
     >
