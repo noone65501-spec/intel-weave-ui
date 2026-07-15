@@ -68,6 +68,7 @@ function ReportListItem({
 }
 
 function ReportPreview({ report }: { report: Report }) {
+  const download = useDownloadReport();
   return (
     <Card className="glass border-border/60 overflow-hidden">
       <div className="flex items-center gap-2 p-4 border-b border-border/60">
@@ -82,11 +83,18 @@ function ReportPreview({ report }: { report: Report }) {
           <Button variant="ghost" size="sm" className="gap-1">
             <Eye className="h-3.5 w-3.5" aria-hidden="true" /> Preview
           </Button>
-          <Button size="sm" className="bg-gradient-to-r from-primary to-accent text-primary-foreground gap-1">
-            <Download className="h-3.5 w-3.5" aria-hidden="true" /> Download
+          <Button
+            size="sm"
+            disabled={download.isPending}
+            onClick={() => download.mutate({ investigationId: report.investigation, reportId: report.id }).catch(() => {})}
+            className="bg-gradient-to-r from-primary to-accent text-primary-foreground gap-1"
+          >
+            <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            {download.isPending ? "Preparing…" : "Download"}
           </Button>
         </div>
       </div>
+
 
       <div className="p-6 bg-[oklch(0.11_0.015_260)] min-h-[600px]">
         <div className="max-w-2xl mx-auto bg-white text-black rounded-md p-10 shadow-2xl aspect-[8.5/11]">
